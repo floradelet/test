@@ -1,16 +1,19 @@
-Function drone(instanceName::String)
-	m = Model()
+using JuMP
+using CPLEX
+
+function drone(instanceName::String)
+	m = Model(solver=CplexSolver())
 	K=0.2
 	V=6
 	R=20
 	W=0
 	@variable(m, b)
-	@variable (m, u)
+	@variable(m, u)
 
 
 #initialisation du terrain
 
-	[start, destination, obstacles]=loadDataFromFile(instanceName)
+	[start, destination, obstacles]=data.loadDataFromFile(instanceName)
 
 	Seen = Array{Tuple{Float64,Float64}}(0)
 	NotSeen = Array{Tuple{Float64,Float64}}(0)
@@ -20,7 +23,7 @@ Function drone(instanceName::String)
 	while i>0
 		[obsx obsy]=pop!(obstacles)
 		if ((obsx-x)^2+(obsy-y)^2 > R^2)
-			push!(NotSeen, obstacles[i])		#NotSeen devrait être une liste chainee pour etre optimal
+			push!(NotSeen, obstacles[i])		#NotSeen devrait ï¿½tre une liste chainee pour etre optimal
 		else
 			push!(Seen, obstacles[i])		#Seen est soit un tableau, soit une liste chainee
 		end
@@ -31,14 +34,72 @@ Function drone(instanceName::String)
 
 
 	#declaration des coefficients de V(s)
-	@variable(m, c_1)	@variable(m, c_2)	@variable(m, c_3)	@variable(m, c_4)	@variable(m, c_5)	@variable(m, c_6)	@variable(m, c_7)	@variable(m, c_8)	@variable(m, c_9)	@variable(m, c_10)
+	@variable(m, c_1)	
+	@variable(m, c_2)	
+	@variable(m, c_3)	
+	@variable(m, c_4)	
+	@variable(m, c_5)	
+	@variable(m, c_6)	
+	@variable(m, c_7)	
+	@variable(m, c_8)	
+	@variable(m, c_9)	
+	@variable(m, c_10)
 
 
 
-#contrainte sur dérivée de V
+#contrainte sur dï¿½rivï¿½e de V
 
-	#déclaration des coefficients de la matrice dérivée
-	@variable(m, m_11)	@variable(m, m_12)	@variable(m, m_13)	@variable(m, m_14)	@variable(m, m_15)	@variable(m, m_16)	@variable(m, m_17)	@variable(m, m_18)	@variable(m, m_19)	@variable(m, m_1a)	@variable(m, m_24)	@variable(m, m_25)	@variable(m, m_26)	@variable(m, m_27)	@variable(m, m_28)	@variable(m, m_29)	@variable(m, m_2a)	@variable(m, m_34)	@variable(m, m_35)	@variable(m, m_36)	@variable(m, m_37)	@variable(m, m_38)	@variable(m, m_39)	@variable(m, m_3a)	@variable(m, m_44)	@variable(m, m_45)	@variable(m, m_46)	@variable(m, m_47)	@variable(m, m_48)	@variable(m, m_49)	@variable(m, m_4a)	@variable(m, m_55)	@variable(m, m_56)	@variable(m, m_57)	@variable(m, m_58)	@variable(m, m_59)	@variable(m, m_66)	@variable(m, m_67)	@variable(m, m_68)	@variable(m, m_77)	@variable(m,m_5a)	@variable(m, m_69)	@variable(m, m_6a)	@variable(m, m_78)	@variabe(m, m_79)	@variable(m, m_7a)	@variable(m, m_88)	@variable(m, m_89)	@variable(m, m_8a)	@variable(m, m_99)
+	#dï¿½claration des coefficients de la matrice dï¿½rivï¿½e
+	@variable(m, m_11)	
+	@variable(m, m_12)	
+	@variable(m, m_13)	
+	@variable(m, m_14)	
+	@variable(m, m_15)	
+	@variable(m, m_16)	
+	@variable(m, m_17)	
+	@variable(m, m_18)	
+	@variable(m, m_19)	
+	@variable(m, m_1a)	
+	@variable(m, m_24)	
+	@variable(m, m_25)	
+	@variable(m, m_26)	
+	@variable(m, m_27)	
+	@variable(m, m_28)	
+	@variable(m, m_29)	
+	@variable(m, m_2a)	
+	@variable(m, m_34)	
+	@variable(m, m_35)	
+	@variable(m, m_36)	
+	@variable(m, m_37)	
+	@variable(m, m_38)	
+	@variable(m, m_39)	
+	@variable(m, m_3a)	
+	@variable(m, m_44)	
+	@variable(m, m_45)	
+	@variable(m, m_46)	
+	@variable(m, m_47)	
+	@variable(m, m_48)	
+	@variable(m, m_49)	
+	@variable(m, m_4a)	
+	@variable(m, m_55)	
+	@variable(m, m_56)	
+	@variable(m, m_57)	
+	@variable(m, m_58)	
+	@variable(m, m_59)	
+	@variable(m, m_66)	
+	@variable(m, m_67)	
+	@variable(m, m_68)	
+	@variable(m, m_77)	
+	@variable(m, m_5a)	
+	@variable(m, m_69)	
+	@variable(m, m_6a)	
+	@variable(m, m_78)	
+	@variable(m, m_79)	
+	@variable(m, m_7a)	
+	@variable(m, m_88)	
+	@variable(m, m_89)	
+	@variable(m, m_8a)	
+	@variable(m, m_99)
 		
 	#correspondance entre coefficients par analogie
 	@constraint(m, m_11 == C_2*w+C_3*v +K*C_4*u)
@@ -84,21 +145,26 @@ Function drone(instanceName::String)
 	      m_1a m_2a m_3a m_4a m_5a m_6a m_7a m_8a 0    0   ]
 	@SDconstraint(m, A<=0)
 
-#contrainte sur le départ
-	@constraint(m,C_1+C_2*x+C_3*y+C_4*t+C_5*x^2+C_6*y^2+C_7*t^2+C_8*x*y+C_9*x*t+C_10*y*t < b)
+#contrainte sur le dï¿½part
+	@constraint(m, C_1+C_2*x+C_3*y+C_4*t+C_5*x^2+C_6*y^2+C_7*t^2+C_8*x*y+C_9*x*t+C_10*y*t <= b)
 
 #contrainte sur les obstacles
 	
 	for i=1:length(Seen)
 		[x_obs y_obs] = Seen[i]
-		Obs=[C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs (C_4+C_9*x+C_10*y)/2;
-		     (C_4+C_9*x+C_10*y)/2 C_7]
-		@SDconstraint(m, obs >= 0)
+		@constraint(m,C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs-b >= 0)				# V(0)-b >0
+		delta = (C_9*x_obs+C_10*y_obs)^2-4*C_7*(C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs-b)
+		if delta >=0
+			s1=(-(C_9*x_obs+C_10*y_obs)+sqrt(delta))/(2*C_7)							#si il y a un zero sur la fonction
+			s2=(-(C_9*x_obs+C_10*y_obs)-sqrt(delta))/(2*C_7)							#on ajoute la contrainte qu'il soit en dehors
+			s1=min(abs(s1), abs(s2))										#de [-pi pi]
+			@constraint(m, s1 >= 3.141592)
+		end
 		i+=1
 	end
 
 
-#on a tenu compte de toutes les contraintes, on doit résoudre
+#on a tenu compte de toutes les contraintes, on doit rï¿½soudre
 	status=solve(m)
 end
 

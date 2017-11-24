@@ -8,6 +8,7 @@ function drone(instanceName::String)
 	R=20
 	W=0
 	@variable(m, b)
+	epsilon = 0.01  #pour avoir une inégalité stricte, on ajoute/retire à b epsilon et on fait une inégalité
 	@variable(m, u)
 
 
@@ -146,14 +147,14 @@ function drone(instanceName::String)
 	@SDconstraint(m, A<=0)
 
 #contrainte sur le d�part
-	@constraint(m, C_1+C_2*x+C_3*y+C_4*t+C_5*x^2+C_6*y^2+C_7*t^2+C_8*x*y+C_9*x*t+C_10*y*t <= b)
+	@constraint(m, C_1+C_2*x+C_3*y+C_4*t+C_5*x^2+C_6*y^2+C_7*t^2+C_8*x*y+C_9*x*t+C_10*y*t <= b-epsilon)
 
 #contrainte sur les obstacles
 	
 	for i=1:length(Seen)
 		[x_obs y_obs] = Seen[i]
-		@constraint(m,C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs-b >= 0)				# V(0)-b >0
-		delta = (C_9*x_obs+C_10*y_obs)^2-4*C_7*(C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs-b)
+		@constraint(m,C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs-(b+esilon) >= 0)				# V(0) >= b+epsilon
+		delta = (C_9*x_obs+C_10*y_obs)^2-4*C_7*(C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs-(b+epsilon))
 		if delta >=0
 			s1=(-(C_9*x_obs+C_10*y_obs)+sqrt(delta))/(2*C_7)							#si il y a un zero sur la fonction
 			s2=(-(C_9*x_obs+C_10*y_obs)-sqrt(delta))/(2*C_7)							#on ajoute la contrainte qu'il soit en dehors

@@ -8,7 +8,7 @@ function drone(instanceName::String)
 	R=20
 	W=0
 	@variable(m, b)
-	epsilon = 0.01  #pour avoir une inégalité stricte, on ajoute/retire à b epsilon et on fait une inégalité
+	epsilon = 0.000001  #pour avoir une inégalité stricte, on ajoute/retire à b epsilon et on fait une inégalité
 	@variable(m, u)
 
 

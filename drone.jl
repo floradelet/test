@@ -174,7 +174,7 @@ end
 ***************************************************************************************************************************************
 
 function SOCP_question
-    	m = Model(solver=CplexSolver())
+    m = Model(solver=CplexSolver())
 	K=0.2
 	V=6
 	R=20
@@ -186,7 +186,7 @@ function SOCP_question
 
 #initialisation du terrain
 
-	[start, destination, obstacles]=data.loadDataFromFile(instanceName)
+	[start, destination, obstacles]=loadDataFromFile(instanceName)
 
 	Seen = Array{Tuple{Float64,Float64}}(0)
 	NotSeen = Array{Tuple{Float64,Float64}}(0)

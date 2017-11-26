@@ -1,5 +1,6 @@
 using JuMP
 using CPLEX
+include("data.jl")
 
 function drone(instanceName::String)
 	m = Model(solver=CplexSolver())
@@ -13,7 +14,7 @@ function drone(instanceName::String)
 
 #initialisation du terrain
 
-	[start, destination, obstacles]=data.loadDataFromFile(instanceName)
+	[start, destination, obstacles]=loadDataFromFile(instanceName)
 
 	Seen = Array{Tuple{Float64,Float64}}(0)
 	NotSeen = Array{Tuple{Float64,Float64}}(0)

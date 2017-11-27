@@ -5,9 +5,9 @@ include("data.jl")
 function drone(instanceName::String)
 	m = Model(solver=CplexSolver())
 	K=0.2
-	V=6
+	v=6
 	R=20
-	W=0
+	w=0
 	@variable(m, b)
 	epsilon = 0.000001  #pour avoir une inegalite stricte, on ajoute/retire à b epsilon et on fait une inegalite
 	@variable(m, u)
@@ -41,16 +41,16 @@ function drone(instanceName::String)
 
 
 	#declaration des coefficients de V(s)
-	@variable(m, c_1)	
-	@variable(m, c_2)	
-	@variable(m, c_3)	
-	@variable(m, c_4)	
-	@variable(m, c_5)	
-	@variable(m, c_6)	
-	@variable(m, c_7)	
-	@variable(m, c_8)	
-	@variable(m, c_9)	
-	@variable(m, c_10)
+	@variable(m, C_1)	
+	@variable(m, C_2)	
+	@variable(m, C_3)	
+	@variable(m, C_4)	
+	@variable(m, C_5)	
+	@variable(m, C_6)	
+	@variable(m, C_7)	
+	@variable(m, C_8)	
+	@variable(m, C_9)	
+	@variable(m, C_10)
 
 
 

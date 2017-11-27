@@ -14,20 +14,25 @@ function drone(instanceName::String)
 
 
 #initialisation du terrain
-
-	[start, destination, obstacles]=loadDataFromFile(instanceName)
+    file=loadDataFromFile(instanceName)
+    start=file[1]
+    destination=file[2]
+    obstacles=file[3]
 
 	Seen = Array{Tuple{Float64,Float64}}(0)
 	NotSeen = Array{Tuple{Float64,Float64}}(0)
-	[x y]=start
+	x=start[1]
+	y=start[2]
 	t=0	#t pour theta
 	i=length(obstacles)
 	while i>0
-		[obsx obsy]=pop!(obstacles)
+		obs=pop!(obstacles)
+		obs_x=obs[1]
+		obs_y=obs[2]
 		if ((obsx-x)^2+(obsy-y)^2 > R^2)
-			push!(NotSeen, obstacles[i])		#NotSeen devrait etre une liste chainee pour etre optimal
+			push!(NotSeen, obs)		#NotSeen devrait etre une liste chainee pour etre optimal
 		else
-			push!(Seen, obstacles[i])		#Seen est soit un tableau, soit une liste chainee
+			push!(Seen, obs)		#Seen est soit un tableau, soit une liste chainee
 		end
 		i-=1
 	end
@@ -153,7 +158,8 @@ function drone(instanceName::String)
 #contrainte sur les obstacles
 	
 	for i=1:length(Seen)
-		[x_obs y_obs] = Seen[i]
+		x_obs = Seen[i][1]
+		y_obs = Seen[i][2]
 		@constraint(m,C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs-(b+esilon) >= 0)				# V(0) >= b+epsilon
 		delta = (C_9*x_obs+C_10*y_obs)^2-4*C_7*(C_1-b+C_2*x_obs+C_3*y_obs+C_5*x_obs^2+C_6*y_obs^2+C_8*x_obs*y_obs-(b+epsilon))
 		if delta >=0

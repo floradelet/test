@@ -11,7 +11,10 @@ function drone(instanceName::String)
  	w=0
  	@variable(m, b)
  	epsilon = 0.000000001  #pour avoir une inegalite stricte, on ajoute/retire � b epsilon et on fait une inegalite
- 	@variable(m, u) #initialisation du terrain
+ 	
+ 	u=0 
+ 	
+ 	#initialisation du terrain
 
 	donnee=generateData(10)
 	depart=donnee.start
